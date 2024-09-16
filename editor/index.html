@@ -1,0 +1,227 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <link rel="stylesheet" href="style.css">
+    <title>JSON Product File Editor</title>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/Sortable/1.14.0/Sortable.min.js"></script>
+</head>
+
+<body>
+
+    <h1>JSON Product File Editor</h1>
+
+    <div class="buttons">
+        <input type="file" id="jsonFile" accept=".json" class="button" hidden />
+
+        <button id="uploadButton" class="button">Upload JSON File</button>
+
+        <button id="downloadJson" class="button">Download JSON</button>
+    </div>
+
+    <div class="buttons">
+        <button onclick="addCategory()" class="button">Add Category</button>
+    </div>
+
+    <div id="editor"></div>
+
+    <script>
+        let jsonData = {};
+
+        document.getElementById('uploadButton').addEventListener('click', function () {
+            document.getElementById('jsonFile').click();
+        });
+
+        document.getElementById('jsonFile').addEventListener('change', loadJson);
+        document.getElementById('downloadJson').addEventListener('click', downloadJson);
+
+        function loadJson(event) {
+            const file = event.target.files[0];
+            const reader = new FileReader();
+            reader.onload = function (e) {
+                jsonData = JSON.parse(e.target.result);
+                renderEditor();
+            };
+            reader.readAsText(file);
+        }
+
+        function downloadJson() {
+            const blob = new Blob([JSON.stringify(jsonData, null, 2)], { type: "application/json" });
+            const url = URL.createObjectURL(blob);
+            const a = document.createElement('a');
+            a.href = url;
+            a.download = "data.json";
+            a.click();
+            URL.revokeObjectURL(url);
+        }
+
+        function renderEditor() {
+            const editor = document.getElementById('editor');
+            editor.innerHTML = '';
+
+            for (const category in jsonData) {
+                const categoryElement = document.createElement('div');
+                categoryElement.classList.add('category');
+                categoryElement.innerHTML = `
+                <div class="category-header">
+                    <span><b>${category}</b></span>
+                    <div class="category-actions">
+                        <button class="unit-delete-button" onclick="removeCategory('${category}')"></button>
+                    </div>
+                </div>
+                <div class="products" id="${category}-products"></div>
+                <button onclick="addProduct('${category}')" class="button">Add Product</button>
+            `;
+
+                editor.appendChild(categoryElement);
+                const productContainer = document.getElementById(`${category}-products`);
+                for (const product in jsonData[category]) {
+                    addProductToContainer(category, product, jsonData[category][product], productContainer);
+                }
+
+                Sortable.create(productContainer, {
+                    group: 'products',
+                    animation: 150
+                });
+            }
+        }
+
+        function addProductToContainer(category, productName, productData, container) {
+            const productElement = document.createElement('div');
+            productElement.classList.add('product');
+            let productHtml = `
+            <div class="product-header">
+                <span><b>${productName}</b></span>
+                <div class="product-actions">
+                    <button class="unit-delete-button" onclick="removeProduct('${category}', '${productName}')"></button>
+
+                </div>
+            </div>
+            <div class="product-info">
+                <div class="image-container">
+                    <img src="${productData.photo || 'default_photo'}" class="product-image" alt="Product Image">
+                    <input type="file" class="image-input" style="display:none;" onchange="editImage('${category}', '${productName}', this)">
+                    <button class="button edit-image-button" onclick="this.previousElementSibling.click();">Edit Image</button>
+                </div>
+                <div class="description-container">
+                    <strong>Description:</strong>
+                    <textarea class="description-input" oninput="editDescription('${category}', '${productName}', this.value)">${productData.description || 'No description'}</textarea>
+                </div>
+            </div>
+        `;
+
+            productHtml += '<div class="units-container editable" id="' + productName + '-units">';
+            for (const key in productData.data) {
+                productHtml += `
+                <div>
+                    <label>${key}</label>
+                    <input type="number" value="${productData.data[key]}" oninput="editValue('${category}', '${productName}', '${key}', this.value)" />
+                    <button class="unit-delete-button" onclick="removeUnit('${category}', '${productName}', '${key}')"></button>
+                </div>
+            `;
+            }
+            productHtml += '</div>';
+            productHtml += `<button onclick="addUnit('${category}', '${productName}')" class="button">Add Unit</button>`;
+            productElement.innerHTML = productHtml;
+            container.appendChild(productElement);
+
+            Sortable.create(document.getElementById(productName + '-units'), {
+                group: 'units',
+                animation: 150,
+                onEnd: function (evt) {
+                    reorderUnits(category, productName, evt);
+                }
+            });
+        }
+
+        function addUnit(category, productName) {
+            const unitName = prompt('Enter unit name (e.g., 1g, 2g):');
+            const unitPrice = prompt('Enter price for ' + unitName + ':');
+            if (unitName && unitPrice) {
+                jsonData[category][productName].data[unitName] = unitPrice;
+                renderEditor();
+            }
+        }
+
+        function reorderUnits(category, productName, evt) {
+            const productData = jsonData[category][productName].data;
+            const newUnits = {};
+            const unitElements = document.getElementById(productName + '-units').children;
+
+            for (let i = 0; i < unitElements.length; i++) {
+                const unitName = unitElements[i].querySelector('label').textContent.trim();
+                const unitPrice = unitElements[i].querySelector('input').value;
+                newUnits[unitName] = unitPrice;
+            }
+
+            jsonData[category][productName].data = newUnits;
+        }
+
+        function addCategory() {
+            const categoryName = prompt('Enter new category name:');
+            if (categoryName && !jsonData[categoryName]) {
+                jsonData[categoryName] = {};
+                renderEditor();
+            }
+        }
+
+        function removeCategory(category) {
+            delete jsonData[category];
+            renderEditor();
+        }
+
+        function addProduct(category) {
+            const productName = prompt('Enter new product name:');
+            if (productName && !jsonData[category][productName]) {
+                jsonData[category][productName] = {
+                    "photo": "",
+                    "description": "",
+                    "data": {}
+                };
+                renderEditor();
+            }
+        }
+
+        function removeProduct(category, product) {
+            delete jsonData[category][product];
+            renderEditor();
+        }
+
+        function removeUnit(category, productName, unitKey) {
+            delete jsonData[category][productName].data[unitKey];
+            renderEditor(); // Re-render the editor to update the changes
+        }
+
+        function editDescription(category, product, newValue) {
+            jsonData[category][product].description = newValue;
+        }
+
+        function editValue(category, product, key, newValue) {
+            jsonData[category][product].data[key] = newValue;
+        }
+
+        // Convert uploaded image to base64 and save it in jsonData
+        function editImage(category, product, input) {
+            const file = input.files[0];
+            const reader = new FileReader();
+            reader.onloadend = function () {
+                jsonData[category][product].photo = reader.result; // base64 encoded image
+                renderEditor(); // Re-render to show the updated image
+            };
+            if (file) {
+                reader.readAsDataURL(file); // Converts the image to base64
+            }
+        }
+
+        // Enable category drag and drop
+        Sortable.create(document.getElementById('editor'), {
+            group: 'categories',
+            animation: 150
+        });
+    </script>
+
+</body>
+
+</html>

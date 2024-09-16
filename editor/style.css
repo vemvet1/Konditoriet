@@ -1,0 +1,257 @@
+/* Apply a modern, clean font */
+body {
+    font-family: 'Roboto', sans-serif;
+    margin: 20px;
+    background-color: #f5f7fa;
+    /* Light background for a clean look */
+    color: #333;
+}
+
+/* Style the title */
+h1 {
+    text-align: center;
+    font-size: 2rem;
+    color: #333;
+    margin-bottom: 20px;
+    font-weight: 700;
+}
+
+.buttons {
+    text-align: center;
+    margin-bottom: 20px;
+}
+
+.button {
+    background-color: #007bff;
+    color: white;
+    padding: 10px 20px;
+    border: none;
+    border-radius: 5px;
+    cursor: pointer;
+    font-size: 16px;
+    transition: background-color 0.3s ease, transform 0.2s;
+}
+
+.button:hover {
+    background-color: #0056b3;
+    transform: translateY(-2px);
+}
+
+/* Add container-like card style for categories */
+.category {
+    border: 1px solid #e0e0e0;
+    padding: 20px;
+    margin-bottom: 20px;
+    background-color: #ffffff;
+    box-shadow: 0px 4px 6px rgba(0, 0, 0, 0.1);
+    /* Subtle shadow for depth */
+    border-radius: 8px;
+    /* Rounded corners */
+}
+
+/* Style the category header */
+.category-header {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    background-color: #f0f0f0;
+    padding: 10px;
+    border-radius: 8px;
+    font-weight: 600;
+}
+
+/* Style individual product cards */
+.product {
+    padding: 20px;
+    border: 1px solid #ddd;
+    margin-bottom: 20px;
+    background-color: #fff;
+    border-radius: 8px;
+    box-shadow: 0px 4px 8px rgba(0, 0, 0, 0.1);
+    /* Deeper shadow for better separation */
+}
+
+/* Product header styling */
+.product-header {
+    display: flex;
+    justify-content: space-between;
+    align-items: flex-start;
+    font-size: 1.2rem;
+    font-weight: 600;
+    margin-bottom: 10px;
+}
+
+/* Editable sections styling */
+.editable {
+    display: flex;
+    flex-direction: column;
+    gap: 10px;
+    margin-top: 10px;
+    margin-bottom: 10px;
+}
+
+.editable div {
+    display: grid;
+    grid-template-columns: 1fr 1fr auto;
+    gap: 10px;
+    align-items: center;
+    padding: 12px;
+    border: 1px solid #e0e0e0;
+    border-radius: 6px;
+    background-color: #fafafa;
+    /* Light background */
+}
+
+.editable input {
+    padding: 10px;
+    width: 100%;
+    border-radius: 6px;
+    border: 1px solid #e0e0e0;
+    background-color: #fff;
+    transition: border 0.3s ease;
+}
+
+.editable input:focus {
+    border: 1px solid #007bff;
+    outline: none;
+}
+
+/* Add a modern touch to buttons in product */
+.category-actions,
+.product-actions {
+    display: flex;
+    justify-content: space-between;
+}
+
+.product-info {
+    display: flex;
+    align-items: flex-start;
+    gap: 20px;
+    margin-bottom: 20px;
+    flex-wrap: wrap;
+    width: 100%;
+}
+
+.image-container {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    margin-right: 20px;
+}
+
+.product-image {
+    width: 100px;
+    height: 100px;
+    object-fit: cover;
+    border-radius: 8px;
+    box-shadow: 0px 4px 6px rgba(0, 0, 0, 0.1);
+}
+
+.edit-image-button {
+    margin-top: 10px;
+    background-color: #007bff;
+    color: white;
+    /* padding: 5px 10px; */
+    border: none;
+    border-radius: 5px;
+    cursor: pointer;
+    font-size: 14px;
+}
+
+.edit-image-button:hover {
+    background-color: #0056b3;
+}
+
+.description-container {
+    flex: 1;
+    width: 100%;
+}
+
+.description-input {
+    width: 100%;
+    padding: 12px;
+    border: 1px solid #ddd;
+    border-radius: 8px;
+    background-color: #fafafa;
+    min-height: 80px;
+    resize: vertical;
+    margin-bottom: 10px;
+    box-sizing: border-box;
+    transition: border 0.3s ease;
+}
+
+.description-input:focus {
+    border-color: #007bff;
+    outline: none;
+}
+
+/* Existing styles... */
+
+/* Style the units container */
+.units-container {
+    display: grid;
+    grid-template-columns: repeat(2, 1fr);
+    align-items: center;
+    gap: 15px;
+    background-color: #fff;
+    /* White background for contrast */
+    padding: 10px;
+    border: 1px solid #e0e0e0;
+    border-radius: 8px;
+    box-shadow: 0px 4px 6px rgba(0, 0, 0, 0.1);
+    /* Subtle shadow for depth */
+    margin-bottom: 10px;
+}
+
+/* Styling for each unit item */
+.units-container div {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    padding: 12px;
+    background-color: #fafafa;
+    /* Light background */
+    border-radius: 6px;
+}
+
+/* Label (unit name) styling */
+.units-container label {
+    font-size: 1rem;
+    color: #333;
+    font-weight: 600;
+    margin-right: 10px;
+}
+
+/* Input box within units */
+.units-container input {
+    width: 100px;
+    padding: 10px;
+    border-radius: 6px;
+    border: 1px solid #ddd;
+    text-align: right;
+    background-color: #fff;
+    transition: border 0.3s ease;
+}
+
+.units-container input:focus {
+    border-color: #007bff;
+    outline: none;
+}
+
+.unit-delete-button {
+    background-color: transparent;
+    border: none;
+    cursor: pointer;
+    padding: 0;
+    margin-left: 10px;
+    width: 20px;
+    height: 20px;
+    background-image: url('https://cdn-icons-png.flaticon.com/512/6861/6861362.png');
+    background-size: contain;
+    background-repeat: no-repeat;
+    background-position: center;
+}
+
+.unit-delete-button:hover {
+    opacity: 0.8;
+}
