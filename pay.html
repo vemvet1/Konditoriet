@@ -7,71 +7,69 @@
     <script src="https://telegram.org/js/telegram-web-app.js"></script>
     <link rel="stylesheet" href="style.css">
     <script>
-        function setupPaymentPage() {
+        function initializePaymentPage() {
             let product_id = new URLSearchParams(window.location.search).get('tgWebAppStartParam');
     
             const mainButton = window.Telegram.WebApp.MainButton;
             const secondaryButton = window.Telegram.WebApp.SecondaryButton;
     
-            configureButton(mainButton, 'Pay via Stars', 'stars');
-            configureButton(secondaryButton, 'Pay via Crypto', 'crypto');
+            setupButton(mainButton, 'Pay via Stars', 'stars', product_id);
+            setupButton(secondaryButton, 'Pay via Crypto', 'crypto', product_id);
+        }
     
-            function configureButton(button, buttonText, paymentMode) {
-                button.setParams({
-                    text: buttonText,
-                    color: '#000000',
-                    text_color: '#003297',
-                    is_active: true,
-                    is_visible: true
-                });
+        function setupButton(button, buttonText, paymentMode, product_id) {
+            button.setParams({
+                text: buttonText,
+                color: '#000000',
+                text_color: '#003297',
+                is_active: true,
+                is_visible: true
+            });
     
-                button.onClick(async () => {
-                    const api_url = `https://funny-marginally-rabbit.ngrok-free.app/invoice/${product_id}`;
-                    const invoice_url = await handlePayment(api_url, paymentMode);
-                    if (!invoice_url) {
-                        alert("Failed to retrieve the payment link. Please try again.");
-                    } else {
-                        window.Telegram.WebApp.openLink(invoice_url);
-                    }
-                    button.hideProgress();
-                });
-            }
+            button.onClick(() => handleButtonClick(button, paymentMode, product_id));
+        }
     
-            async function handlePayment(api_url, paymentMode) {
-                const form = document.getElementById('userForm');
-                const formData = new FormData(form);
-                const data = { payment_mode: paymentMode, product_id: product_id };
-    
-                formData.forEach((value, key) => {
-                    data[key] = value;
-                });
-    
-                try {
-                    button.showProgress(true);
-                    const response = await fetch(api_url, {
-                        method: 'POST',
-                        headers: {
-                            'Content-Type': 'application/json',
-                            'X-token': Telegram.WebApp.initData
-                        },
-                        body: JSON.stringify(data)
-                    });
-    
-                    if (!response.ok) {
-                        throw new Error(`HTTP status ${response.status}`);
-                    }
-                    return await response.json();
-                } catch (error) {
-                    console.error(error);
-                    alert("Something went wrong!");
-                    return null;
+        async function handleButtonClick(button, paymentMode, product_id) {
+            const api_url = `https://funny-marginally-rabbit.ngrok-free.app/invoice/${product_id}`;
+            button.showProgress(true);
+            try {
+                const invoice_url = await initiatePayment(api_url, paymentMode, product_id);
+                if (invoice_url) {
+                    window.Telegram.WebApp.openLink(invoice_url);
+                } else {
+                    alert("Failed to retrieve the payment link. Please try again.");
                 }
+            } finally {
+                button.hideProgress();
             }
         }
     
-        document.addEventListener('DOMContentLoaded', setupPaymentPage);
-    </script>
+        async function initiatePayment(api_url, paymentMode, product_id) {
+            const form = document.getElementById('userForm');
+            const formData = new FormData(form);
+            const data = { payment_mode: paymentMode, product_id: product_id };
+    
+            formData.forEach((value, key) => {
+                data[key] = value;
+            });
+    
+            const response = await fetch(api_url, {
+                method: 'POST',
+                headers: {
+                    'Content-Type': 'application/json',
+                    'X-token': Telegram.WebApp.initData
+                },
+                body: JSON.stringify(data)
+            });
 
+            if (!response.ok) {
+                throw new Error(`HTTP status ${response.status}`);
+            }
+                return await response.json();
+        }
+    
+        document.addEventListener('DOMContentLoaded', initializePaymentPage);
+    </script>
 </head>
 <body>
     <form id="userForm">
