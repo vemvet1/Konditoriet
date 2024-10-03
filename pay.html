@@ -7,110 +7,71 @@
     <script src="https://telegram.org/js/telegram-web-app.js"></script>
     <link rel="stylesheet" href="style.css">
     <script>
-
-        let product_id = new URLSearchParams(window.location.search).get('tgWebAppStartParam');
-        
-        window.Telegram.WebApp.onEvent('invoiceClosed', function(url, status) {
-            window.Telegram.WebApp.MainButton.hideProgress();
-            window.Telegram.WebApp.close();
-        });
-
-        const mainButton = window.Telegram.WebApp.MainButton;
-        mainButton.setParams({
-            text: `Pay via Stars`,
-            color: '#000000', 
-            text_color: '#003297',
-            is_active: true,
-            is_visible: true
-        });
-
-        const secondaryButton = window.Telegram.WebApp.SecondaryButton;
-        secondaryButton.setParams({
-            text: 'Pay via Crypto',
-            color: '#000000', 
-            text_color: '#003297',
-            is_active: true, 
-            is_visible: true,
-            position: 'right'
-        });
-
-        async function handlePayment(api_url, payment_mode) {
-            try {
+        function setupPaymentPage() {
+            let product_id = new URLSearchParams(window.location.search).get('tgWebAppStartParam');
+    
+            const mainButton = window.Telegram.WebApp.MainButton;
+            const secondaryButton = window.Telegram.WebApp.SecondaryButton;
+    
+            configureButton(mainButton, 'Pay via Stars', 'stars');
+            configureButton(secondaryButton, 'Pay via Crypto', 'crypto');
+    
+            function configureButton(button, buttonText, paymentMode) {
+                button.setParams({
+                    text: buttonText,
+                    color: '#000000',
+                    text_color: '#003297',
+                    is_active: true,
+                    is_visible: true
+                });
+    
+                button.onClick(async () => {
+                    const api_url = `https://funny-marginally-rabbit.ngrok-free.app/invoice/${product_id}`;
+                    const invoice_url = await handlePayment(api_url, paymentMode);
+                    if (!invoice_url) {
+                        alert("Failed to retrieve the payment link. Please try again.");
+                    } else {
+                        window.Telegram.WebApp.openLink(invoice_url);
+                    }
+                    button.hideProgress();
+                });
+            }
+    
+            async function handlePayment(api_url, paymentMode) {
                 const form = document.getElementById('userForm');
                 const formData = new FormData(form);
-                const data = {payment_mode: payment_mode};
-
+                const data = { payment_mode: paymentMode, product_id: product_id };
+    
                 formData.forEach((value, key) => {
                     data[key] = value;
                 });
-
-
-                const response = await fetch(api_url, {
-                    method: 'POST',
-                    headers: {
-                        'Content-Type': 'application/json',
-                        'X-token': window.Telegram.WebApp.initData
-                    },
-                    body: JSON.stringify(data),
-                });
-
-                if (response.status === 404) {
-                    alert('Product not available');
-                    window.Telegram.WebApp.close();
-                    throw new Error('Product not available');
-                } else if (response.status === 401) {
-                    alert('User not authenticated');
-                    window.Telegram.WebApp.close();
-                    throw new Error('User not authenticated');
-                } else if (!response.ok) {
-                    throw new Error('Something went wrong');
+    
+                try {
+                    button.showProgress(true);
+                    const response = await fetch(api_url, {
+                        method: 'POST',
+                        headers: {
+                            'Content-Type': 'application/json',
+                            'X-token': Telegram.WebApp.initData
+                        },
+                        body: JSON.stringify(data)
+                    });
+    
+                    if (!response.ok) {
+                        throw new Error(`HTTP status ${response.status}`);
+                    }
+                    return await response.json();
+                } catch (error) {
+                    console.error(error);
+                    alert("Something went wrong!");
+                    return null;
                 }
-
-                const url = await response.json();
-                console.log(url);
-                return url;
-
-            } catch (error) {
-                console.log(error);
-                alert("Something went wrong!");
             }
         }
-
-        mainButton.onClick(async () => {
-            mainButton.showProgress(true);
-            const api_url = `https://funny-marginally-rabbit.ngrok-free.app/invoice/${product_id}`;
-            // const api_url = `https://pay.bestbot.link/invoice/${product_id}`;
-            const invoice_url = await handlePayment(api_url, 'stars'); 
-
-            // Error handling if invoice_url is not returned
-            if (!invoice_url) {
-                alert("Failed to retrieve the payment link. Please try again.");
-                mainButton.hideProgress();
-                return;
-            }
-
-            window.Telegram.WebApp.openInvoice(invoice_url);
-            mainButton.hideProgress();
-        });
-
-        secondaryButton.onClick(async () => {
-            secondaryButton.showProgress(true);
-            const api_url = `https://funny-marginally-rabbit.ngrok-free.app/crypto_invoice/${product_id}`;
-            // const api_url = `https://pay.bestbot.link/crypto_invoice/${product_id}`;
-            const invoice_url = await handlePayment(api_url, 'crypto');
-
-            // Error handling if invoice_url is not returned
-            if (!invoice_url) {
-                alert("Failed to retrieve the payment link. Please try again.");
-                secondaryButton.hideProgress();
-                return;
-            }
-
-            window.Telegram.WebApp.openLink(invoice_url); 
-            window.Telegram.WebApp.close();
-        });
-
+    
+        document.addEventListener('DOMContentLoaded', setupPaymentPage);
     </script>
+
 </head>
 <body>
     <form id="userForm">
