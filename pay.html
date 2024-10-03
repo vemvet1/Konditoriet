@@ -21,20 +21,18 @@
             color: '#000000', 
             text_color: '#003297',
             is_active: true,
+            is_visible: true
         });
-
-        mainButton.show();
 
         const secondaryButton = window.Telegram.WebApp.SecondaryButton;
         secondaryButton.setParams({
             text: 'Pay via Crypto',
             color: '#000000', 
             text_color: '#003297',
-            is_visible: true, 
+            is_active: true, 
+            is_visible: true,
             position: 'right'
         });
-
-        secondaryButton.show();
 
         async function handlePayment(api_url) {
             try {
@@ -83,7 +81,8 @@
 
         mainButton.onClick(async () => {
             mainButton.showProgress(true);
-            const api_url = `https://pay.bestbot.link/invoice/${product_id}`;
+            const api_url = `https://funny-marginally-rabbit.ngrok-free.app/invoice/${product_id}`;
+            // const api_url = `https://pay.bestbot.link/invoice/${product_id}`;
             const invoice_url = await handlePayment(api_url); 
 
             // Error handling if invoice_url is not returned
@@ -99,7 +98,8 @@
 
         secondaryButton.onClick(async () => {
             secondaryButton.showProgress(true);
-            const api_url = `https://pay.bestbot.link/crypto_invoice/${product_id}`;
+            const api_url = `https://funny-marginally-rabbit.ngrok-free.app/crypto_invoice/${product_id}`;
+            // const api_url = `https://pay.bestbot.link/crypto_invoice/${product_id}`;
             const invoice_url = await handlePayment(api_url);
 
             // Error handling if invoice_url is not returned
