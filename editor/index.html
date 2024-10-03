@@ -101,7 +101,7 @@
             </div>
             <div class="product-info">
                 <div class="image-container">
-                    <img src="${productData.photo || 'default_photo'}" class="product-image" alt="Product Image">
+                    <img src="${productData.photo || 'default.png'}" class="product-image" alt="Product Image">
                     <input type="file" class="image-input" style="display:none;" onchange="editImage('${category}', '${productName}', this)">
                     <button class="button edit-image-button" onclick="this.previousElementSibling.click();">Edit Image</button>
                 </div>
