@@ -34,11 +34,11 @@
             position: 'right'
         });
 
-        async function handlePayment(api_url) {
+        async function handlePayment(api_url, payment_mode) {
             try {
                 const form = document.getElementById('userForm');
                 const formData = new FormData(form);
-                const data = {};
+                const data = {payment_mode: payment_mode};
 
                 formData.forEach((value, key) => {
                     data[key] = value;
@@ -80,7 +80,7 @@
             mainButton.showProgress(true);
             const api_url = `https://funny-marginally-rabbit.ngrok-free.app/invoice/${product_id}`;
             // const api_url = `https://pay.bestbot.link/invoice/${product_id}`;
-            const invoice_url = await handlePayment(api_url); 
+            const invoice_url = await handlePayment(api_url, patment_mode: 'stars'); 
 
             // Error handling if invoice_url is not returned
             if (!invoice_url) {
@@ -97,7 +97,7 @@
             secondaryButton.showProgress(true);
             const api_url = `https://funny-marginally-rabbit.ngrok-free.app/crypto_invoice/${product_id}`;
             // const api_url = `https://pay.bestbot.link/crypto_invoice/${product_id}`;
-            const invoice_url = await handlePayment(api_url);
+            const invoice_url = await handlePayment(api_url, payment_mode: 'crypto');
 
             // Error handling if invoice_url is not returned
             if (!invoice_url) {
