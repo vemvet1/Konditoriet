@@ -113,11 +113,11 @@
         `;
 
             productHtml += '<div class="units-container editable" id="' + productName + '-units">';
-            for (const key in productData.data) {
+            for (const key in productData.prices) {
                 productHtml += `
                 <div>
                     <label>${key}</label>
-                    <input type="number" value="${productData.data[key]}" oninput="editValue('${category}', '${productName}', '${key}', this.value)" />
+                    <input type="number" value="${productData.prices[key]}" oninput="editValue('${category}', '${productName}', '${key}', this.value)" />
                     <button class="unit-delete-button" onclick="removeUnit('${category}', '${productName}', '${key}')"></button>
                 </div>
             `;
