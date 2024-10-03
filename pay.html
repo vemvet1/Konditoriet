@@ -10,8 +10,8 @@
         function initializePaymentPage() {
             let product_id = new URLSearchParams(window.location.search).get('tgWebAppStartParam');
     
-            const mainButton = window.Telegram.WebApp.MainButton;
-            const secondaryButton = window.Telegram.WebApp.SecondaryButton;
+            const mainButton = Telegram.WebApp.MainButton;
+            const secondaryButton = Telegram.WebApp.SecondaryButton;
     
             setupButton(mainButton, 'Pay via Crypto', 'crypto', product_id);
             setupButton(secondaryButton, 'Pay via Stars', 'stars', product_id);
@@ -35,10 +35,14 @@
             try {
                 const invoice_url = await initiatePayment(api_url, paymentMode, product_id);
                 if (invoice_url) {
-                    window.Telegram.WebApp.openLink(invoice_url);
+                    if (paymentMode === 'crypto'){
+                        Telegram.WebApp.openLink(invoice_url);
+                         Telegram.WebApp.close();
+                    } else {
+                        Telegram.WebApp.openInvoice(invoice_url);
+                    }
                 } else {
                     alert("Failed to retrieve the payment link. Please try again.");
-
                 }
             } finally {
                 button.hideProgress();
