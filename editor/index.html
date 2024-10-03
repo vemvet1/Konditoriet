@@ -140,7 +140,7 @@
             const unitName = prompt('Enter unit name (e.g., 1g, 2g):');
             const unitPrice = prompt('Enter price for ' + unitName + ':');
             if (unitName && unitPrice) {
-                jsonData[category][productName].data[unitName] = unitPrice;
+                jsonData[category][productName].prices[unitName] = unitPrice;
                 renderEditor();
             }
         }
