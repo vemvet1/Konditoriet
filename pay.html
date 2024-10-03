@@ -38,7 +38,7 @@
             try {
                 const form = document.getElementById('userForm');
                 const formData = new FormData(form);
-                const data = {payment_mode: payment_mode};
+                const data = {payment_mode: payment_mode, product_id: product_id};
 
                 formData.forEach((value, key) => {
                     data[key] = value;
