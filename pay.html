@@ -13,8 +13,8 @@
             const mainButton = window.Telegram.WebApp.MainButton;
             const secondaryButton = window.Telegram.WebApp.SecondaryButton;
     
-            setupButton(mainButton, 'Pay via Stars', 'stars', product_id);
-            setupButton(secondaryButton, 'Pay via Crypto', 'crypto', product_id);
+            setupButton(mainButton, 'Pay via Crypto', 'crypto', product_id);
+            setupButton(secondaryButton, 'Pay via Stars', 'stars', product_id);
         }
     
         function setupButton(button, buttonText, paymentMode, product_id) {
@@ -23,9 +23,9 @@
                 color: '#000000',
                 text_color: '#003297',
                 is_active: true,
-                is_visible: true
+                is_visible: true, 
+                has_shine_effect: true
             });
-    
             button.onClick(() => handleButtonClick(button, paymentMode, product_id));
         }
     
