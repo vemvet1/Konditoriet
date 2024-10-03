@@ -49,7 +49,7 @@
                     method: 'POST',
                     headers: {
                         'Content-Type': 'application/json',
-                        'token': window.Telegram.WebApp.initData
+                        'X-token': window.Telegram.WebApp.initData
                     },
                     body: JSON.stringify(data),
                 });
