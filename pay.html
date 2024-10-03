@@ -44,17 +44,14 @@
                     data[key] = value;
                 });
 
-                const final_data = {
-                    "auth_data": window.Telegram.WebApp.initData,
-                    "order_data": data
-                };
 
                 const response = await fetch(api_url, {
                     method: 'POST',
                     headers: {
                         'Content-Type': 'application/json',
+                        'token': window.Telegram.WebApp.initData
                     },
-                    body: JSON.stringify(final_data),
+                    body: JSON.stringify(data),
                 });
 
                 if (response.status === 404) {
