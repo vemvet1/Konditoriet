@@ -14,7 +14,10 @@
             const secondaryButton = Telegram.WebApp.SecondaryButton;
 
             Telegram.WebApp.onEvent('invoiceClosed', (eventData) => {
-                alert(eventData.status); 
+                if (eventData.status == "paid"){
+                    alert("Thank you for payment!");
+                    Telegram.WebApp.close();                    
+                }
             });
             
             setupButton(mainButton, 'Pay via Crypto', 'crypto', product_id);
