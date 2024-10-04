@@ -44,13 +44,14 @@
                 if (invoice_url) {
                     if (paymentMode === 'crypto'){
                         Telegram.WebApp.openLink(invoice_url);
-                         Telegram.WebApp.close();
+                        Telegram.WebApp.close();
                     } else {
                         Telegram.WebApp.openInvoice(invoice_url);
                     }
-                } else {
-                    alert("Failed to retrieve the payment link. Please try again.");
-                }
+                } 
+            } catch (error) {
+                console.error("Error during payment:", error);
+                alert("An unexpected error occurred. Please try again later.");
             } finally {
                 button.hideProgress();
             }
@@ -65,19 +66,35 @@
                 data[key] = value;
             });
     
-            const response = await fetch(api_url, {
-                method: 'POST',
-                headers: {
-                    'Content-Type': 'application/json',
-                    'X-token': Telegram.WebApp.initData
-                },
-                body: JSON.stringify(data)
-            });
-
-            if (!response.ok) {
-                throw new Error(`HTTP status ${response.status}`);
-            }
+            try {
+                const response = await fetch(api_url, {
+                    method: 'POST',
+                    headers: {
+                        'Content-Type': 'application/json',
+                        'X-token': Telegram.WebApp.initData
+                    },
+                    body: JSON.stringify(data)
+                });
+    
+                if (response.status === 404) {
+                    alert("Product is no longer available, please check other products.");
+                    return null;
+                } else if (response.status === 422) {
+                    alert("Invalid request. Please check your form and try again.");
+                    return null;
+                } else if (!response.ok) {
+                    alert("Failed to retrieve the payment link. Please try again.");
+                    return null;
+                }
                 return await response.text();
+            } catch (error) {
+                if (error.message.includes('Failed to fetch')) {
+                    alert("Server is not responding. Please try again later.");
+                } else {
+                    console.error("Error during API request:", error);
+                    throw error; 
+                }
+            }
         }
     
         document.addEventListener('DOMContentLoaded', initializePaymentPage);
