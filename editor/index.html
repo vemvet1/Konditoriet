@@ -146,7 +146,7 @@
         }
 
         function reorderUnits(category, productName, evt) {
-            const productData = jsonData[category][productName].data;
+            const productData = jsonData[category][productName].prices;
             const newUnits = {};
             const unitElements = document.getElementById(productName + '-units').children;
 
@@ -156,7 +156,7 @@
                 newUnits[unitName] = unitPrice;
             }
 
-            jsonData[category][productName].data = newUnits;
+            jsonData[category][productName].prices = newUnits;
         }
 
         function addCategory() {
@@ -190,7 +190,7 @@
         }
 
         function removeUnit(category, productName, unitKey) {
-            delete jsonData[category][productName].data[unitKey];
+            delete jsonData[category][productName].prices[unitKey];
             renderEditor(); // Re-render the editor to update the changes
         }
 
@@ -199,7 +199,7 @@
         }
 
         function editValue(category, product, key, newValue) {
-            jsonData[category][product].data[key] = newValue;
+            jsonData[category][product].prices[key] = newValue;
         }
 
         // Convert uploaded image to base64 and save it in jsonData
