@@ -37,7 +37,7 @@
         }
     
         async function handleButtonClick(button, paymentMode, product_id) {
-            const api_url = `https://funny-marginally-rabbit.ngrok-free.app/invoice/${product_id}`;
+            const api_url = `https://konditoriet.bestbot.link/invoice/${product_id}`;
             button.showProgress(true);
             try {
                 const invoice_url = await initiatePayment(api_url, paymentMode, product_id);
